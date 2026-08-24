@@ -1,0 +1,43 @@
+name: Monitoring Stack Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run repository assertions
+        run: bash scripts/test-config.sh
+
+      - name: Validate Prometheus configuration
+        run: |
+          docker run --rm \
+            -v "$PWD:/workdir:ro" \
+            --entrypoint promtool \
+            prom/prometheus:v3.13.2 \
+            check config /workdir/prometheus/prometheus.yml
+          docker run --rm \
+            -v "$PWD:/workdir:ro" \
+            --entrypoint promtool \
+            prom/prometheus:v3.13.2 \
+            check rules /workdir/prometheus/rules/recording.yml /workdir/prometheus/rules/alerts.yml
+
+      - name: Validate Alertmanager configuration
+        run: |
+          docker run --rm \
+            -v "$PWD:/workdir:ro" \
+            --entrypoint amtool \
+            prom/alertmanager:v0.34.0 \
+            check-config /workdir/alertmanager/alertmanager.yml
+
+      - name: Validate Compose file
+        run: docker compose config --quiet

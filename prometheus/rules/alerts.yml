@@ -1,0 +1,56 @@
+groups:
+  - name: infrastructure-alerts
+    rules:
+      - alert: InstanceDown
+        expr: up{job=~"node-exporter|prometheus|blackbox-http"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Monitoring target is down"
+          description: "{{ $labels.instance }} has been unavailable for more than 2 minutes."
+
+      - alert: HighCPUUtilisation
+        expr: instance:cpu_utilisation:rate5m > 85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU utilisation"
+          description: "CPU utilisation on {{ $labels.instance }} is above 85%."
+
+      - alert: CriticalCPUUtilisation
+        expr: instance:cpu_utilisation:rate5m > 95
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical CPU utilisation"
+          description: "CPU utilisation on {{ $labels.instance }} is above 95%."
+
+      - alert: HighMemoryUtilisation
+        expr: instance:memory_utilisation:ratio > 0.90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory utilisation"
+          description: "Memory utilisation on {{ $labels.instance }} is above 90%."
+
+      - alert: RootFilesystemAlmostFull
+        expr: instance:filesystem_utilisation:ratio > 0.85
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Root filesystem is filling"
+          description: "Root filesystem usage on {{ $labels.instance }} is above 85%."
+
+      - alert: BlackboxProbeFailed
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTP probe failed"
+          description: "Endpoint {{ $labels.instance }} failed the HTTP probe."

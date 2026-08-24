@@ -1,0 +1,10 @@
+groups:
+  - name: infrastructure-recording
+    interval: 30s
+    rules:
+      - record: instance:cpu_utilisation:rate5m
+        expr: 100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])))
+      - record: instance:memory_utilisation:ratio
+        expr: 1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)
+      - record: instance:filesystem_utilisation:ratio
+        expr: 1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay",mountpoint="/"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay",mountpoint="/"})

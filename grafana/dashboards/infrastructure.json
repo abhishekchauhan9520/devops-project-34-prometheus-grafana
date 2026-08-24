@@ -1,0 +1,20 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "graphTooltip": 1,
+  "panels": [
+    {"type":"timeseries","title":"CPU Utilisation %","gridPos":{"h":8,"w":12,"x":0,"y":0},"targets":[{"expr":"instance:cpu_utilisation:rate5m","legendFormat":"{{instance}}","refId":"A"}]},
+    {"type":"timeseries","title":"Memory Utilisation %","gridPos":{"h":8,"w":12,"x":12,"y":0},"targets":[{"expr":"100 * instance:memory_utilisation:ratio","legendFormat":"{{instance}}","refId":"A"}]},
+    {"type":"timeseries","title":"Root Filesystem Utilisation %","gridPos":{"h":8,"w":12,"x":0,"y":8},"targets":[{"expr":"100 * instance:filesystem_utilisation:ratio","legendFormat":"{{instance}}","refId":"A"}]},
+    {"type":"stat","title":"Targets Up","gridPos":{"h":5,"w":6,"x":12,"y":8},"targets":[{"expr":"sum(up)","legendFormat":"up","refId":"A"}]},
+    {"type":"stat","title":"Targets Down","gridPos":{"h":5,"w":6,"x":18,"y":8},"targets":[{"expr":"count(up == 0)","legendFormat":"down","refId":"A"}]},
+    {"type":"timeseries","title":"Blackbox Probe Success","gridPos":{"h":8,"w":24,"x":0,"y":13},"targets":[{"expr":"probe_success{job=\"blackbox-http\"}","legendFormat":"{{instance}}","refId":"A"}]}
+  ],
+  "schemaVersion": 41,
+  "tags": ["devops","infrastructure","prometheus"],
+  "templating": {"list": []},
+  "time": {"from":"now-1h","to":"now"},
+  "title": "Infrastructure Overview",
+  "uid": "infra-overview",
+  "version": 1
+}
